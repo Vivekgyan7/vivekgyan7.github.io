@@ -1,1 +1,231 @@
 
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Vivek GYAN 7.0 — Portfolio (Auto)</title>
+  <meta name="description" content="Automatic portfolio for Vivek GYAN 7.0. Detects GitHub repos & social links, shows live date/time."/>
+  <style>
+    :root{--bg:#0f1724;--card:#0b1220;--accent:linear-gradient(90deg,#4a90e2,#9013fe);--muted:#94a3b8}
+    *{box-sizing:border-box}
+    body{margin:0;font-family:Inter,system-ui,Segoe UI,Roboto,"Helvetica Neue",Arial;background:var(--bg);color:#e6eef8;line-height:1.45}
+    .wrap{max-width:1000px;margin:28px auto;padding:18px}
+    header{display:flex;gap:16px;align-items:center}
+    .avatar{width:96px;height:96px;border-radius:12px;background:linear-gradient(135deg,#223, #445);flex:0 0 96px;display:grid;place-items:center;font-weight:700}
+    h1{margin:0;font-size:1.6rem}
+    p.lead{margin:6px 0;color:var(--muted)}
+    .top-right{margin-left:auto;text-align:right;color:var(--muted)}
+    .clock{font-weight:600}
+    .grid{display:grid;grid-template-columns:1fr 320px;gap:18px;margin-top:18px}
+    .card{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.1));padding:18px;border-radius:12px;border:1px solid rgba(255,255,255,0.03)}
+    .skills{display:flex;flex-wrap:wrap;gap:8px}
+    .skill{background:rgba(255,255,255,0.04);padding:6px 10px;border-radius:999px;font-size:0.85rem}
+    .projects{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px}
+    .project{background:rgba(255,255,255,0.02);padding:12px;border-radius:8px}
+    .project h4{margin:0 0 6px 0;font-size:1rem}
+    a{color:#9ad3ff}
+    .socials{display:flex;flex-wrap:wrap;gap:8px}
+    .social{background:rgba(255,255,255,0.03);padding:8px;border-radius:8px;font-size:0.9rem}
+    .controls{display:flex;gap:8px;margin-top:10px}
+    input[type=text]{background:transparent;border:1px solid rgba(255,255,255,0.06);padding:8px;border-radius:8px;color:inherit}
+    button{background:linear-gradient(90deg,#4a90e2,#9013fe);border:none;color:white;padding:8px 12px;border-radius:8px;cursor:pointer}
+    footer{margin-top:18px;text-align:center;color:var(--muted);font-size:0.9rem}
+    @media(max-width:900px){.grid{grid-template-columns:1fr} .top-right{text-align:left;margin-left:0}}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="avatar" id="avatar">VG</div>
+      <div>
+        <h1 id="fullname">Vivek GYAN 7.0</h1>
+        <p class="lead" id="tagline">Tech educator · Web & AI · Open-source enthusiast</p>
+        <div class="controls">
+          <input id="gh-username" type="text" placeholder="GitHub username (auto: Vivekgyan7)" />
+          <button id="btn-load">Auto-detect</button>
+          <button id="btn-refresh">Refresh</button>
+        </div>
+      </div>
+      <div class="top-right card">
+        <div class="clock" id="clock">Loading date/time…</div>
+        <div style="font-size:0.85rem;color:var(--muted)" id="year">© <span id="curYear"></span> Vivek GYAN 7.0</div>
+      </div>
+    </header>
+
+    <div class="grid">
+      <main>
+        <section class="card">
+          <h2>About</h2>
+          <p id="bio">Auto-detected profile from GitHub will appear here. You can edit this file or update your GitHub bio.</p>
+          <div style="margin-top:12px">
+            <strong>Skills:</strong>
+            <div class="skills" id="skills">
+              <span class="skill">HTML</span>
+              <span class="skill">CSS</span>
+              <span class="skill">JavaScript</span>
+              <span class="skill">Firebase</span>
+              <span class="skill">AI</span>
+            </div>
+          </div>
+        </section>
+
+        <section class="card" style="margin-top:12px">
+          <h2>Projects (from GitHub)</h2>
+          <div id="projects" class="projects">Loading repos…</div>
+        </section>
+
+        <section class="card" style="margin-top:12px">
+          <h2>Experience</h2>
+          <p id="experience">Add your experience here. This section is static — edit it locally or let me help auto-fill from LinkedIn if you want.</p>
+        </section>
+      </main>
+
+      <aside>
+        <div class="card">
+          <h3>Profile & Links</h3>
+          <div style="display:flex;gap:10px;align-items:center;margin-top:8px">
+            <img id="gh-avatar-img" src="" alt="avatar" width="64" height="64" style="border-radius:8px;display:none" />
+            <div>
+              <div id="gh-user">@Vivekgyan7</div>
+              <div style="color:var(--muted);font-size:0.9rem" id="gh-meta">Loading GitHub data…</div>
+            </div>
+          </div>
+
+          <div style="margin-top:12px">
+            <strong>Socials</strong>
+            <div class="socials" id="socials">Detecting…</div>
+          </div>
+
+          <div style="margin-top:12px">
+            <strong>Quick links</strong>
+            <div style="margin-top:8px" id="quicklinks">
+              <a id="link-github" class="social" href="#" target="_blank">GitHub</a>
+              <a id="link-site" class="social" href="#" target="_blank">Website</a>
+              <a id="link-blog" class="social" href="#" target="_blank">Blog</a>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="card" style="margin-top:12px">
+          <h3>Auto tools</h3>
+          <p style="color:var(--muted)">This page will try to automatically detect: GitHub profile, public repos, blog link, and common social handles. It uses the GitHub public API.</p>
+        </div>
+      </aside>
+    </div>
+
+    <footer>
+      <small>Auto-generated portfolio • Data pulled live from GitHub when you press <strong>Auto-detect</strong>. You can host this file on GitHub Pages (username.github.io).</small>
+    </footer>
+  </div>
+
+<script>
+// --- Utilities ---
+const $ = id => document.getElementById(id);
+const defaultUser = 'Vivekgyan7';
+$('gh-username').value = defaultUser;
+
+// Clock + year
+function updateClock(){
+  const d = new Date();
+  const opts = {weekday:'short', year:'numeric', month:'short', day:'numeric'};
+  $('clock').textContent = d.toLocaleString('en-IN', opts) + ' — ' + d.toLocaleTimeString('en-IN');
+  $('curYear').textContent = d.getFullYear();
+}
+updateClock(); setInterval(updateClock,1000);
+
+// Fetch GitHub profile & repos
+async function loadFromGitHub(username){
+  if(!username) return;
+  const userUrl = `https://api.github.com/users/${encodeURIComponent(username)}`;
+  try{
+    const res = await fetch(userUrl);
+    if(!res.ok) throw new Error('GitHub user not found');
+    const profile = await res.json();
+
+    // Update header & profile
+    $('fullname').textContent = profile.name || profile.login || 'Vivek GYAN 7.0';
+    $('bio').textContent = profile.bio || 'Bio not provided — edit your GitHub bio.';
+    $('gh-user').textContent = '@' + (profile.login || username);
+    if(profile.avatar_url){
+      const img = $('gh-avatar-img'); img.src = profile.avatar_url; img.style.display = 'block';
+      $('avatar').style.background = `url(${profile.avatar_url}) center/cover`;
+      $('avatar').textContent = '';
+    }
+    $('gh-meta').textContent = `${profile.followers} followers • ${profile.public_repos} public repos`;
+
+    // Quick links
+    $('link-github').href = profile.html_url || `https://github.com/${username}`;
+    $('link-site').href = profile.blog || `https://${username}.github.io`;
+    $('link-blog').href = profile.blog || profile.html_url;
+
+    // Socials: prefer values from profile.twitter_username and blog; otherwise try common handles
+    const socialsEl = $('socials'); socialsEl.innerHTML = '';
+    const makeBtn = (label, href)=>{
+      const a = document.createElement('a'); a.className='social'; a.href=href; a.target='_blank'; a.rel='noopener'; a.textContent=label; socialsEl.appendChild(a);
+    }
+
+    if(profile.twitter_username) makeBtn('Twitter', `https://twitter.com/${profile.twitter_username}`);
+    if(profile.blog) {
+      // try to normalize
+      let blogUrl = profile.blog;
+      if(!blogUrl.startsWith('http')) blogUrl = 'https://' + blogUrl;
+      makeBtn('Website', blogUrl);
+    }
+    // commonly useful handles based on GH username
+    const common = ['linkedin.com/in','instagram.com','youtube.com/@','t.me','facebook.com','pinterest.com','about.me'];
+    common.forEach(domain=>{
+      const url = `https://${domain}/${profile.login}`;
+      makeBtn(domain.split('/')[0], url);
+    });
+
+    // Repos
+    const rres = await fetch(profile.repos_url + '?per_page=100&sort=updated');
+    const repos = await rres.json();
+    const projectsEl = $('projects'); projectsEl.innerHTML = '';
+    if(Array.isArray(repos) && repos.length){
+      repos.filter(r=>!r.fork).slice(0,20).forEach(r=>{
+        const div = document.createElement('div'); div.className='project';
+        div.innerHTML = `<h4><a href="${r.html_url}" target="_blank">${r.name}</a></h4>
+          <div style="font-size:0.9rem;color:var(--muted);margin-bottom:6px">${r.language || ''} • ★ ${r.stargazers_count}</div>
+          <div style="font-size:0.9rem;color:#cfe8ff">${r.description || ''}</div>`;
+        projectsEl.appendChild(div);
+      });
+    } else {
+      projectsEl.textContent = 'No public repositories found.';
+    }
+
+  } catch(err){
+    alert('Error loading GitHub data: ' + err.message);
+  }
+}
+
+// Auto-detect flow: try to detect from meta tags, window.location (for GH Pages), or provided username
+function autoDetect(){
+  // 1) if on username.github.io, extract username
+  const host = location.hostname;
+  const m = host.match(/^([a-z0-9\-]+)\.github\.io$/i);
+  if(m){
+    const user = m[1]; $('gh-username').value = user; loadFromGitHub(user); return;
+  }
+  // 2) try to read repo from query ?repo= or ?user=
+  const params = new URLSearchParams(location.search);
+  if(params.get('user')){ loadFromGitHub(params.get('user')); return; }
+  if(params.get('repo')){
+    // repo format user/repo
+    const parts = params.get('repo').split('/'); if(parts[0]){ $('gh-username').value = parts[0]; loadFromGitHub(parts[0]); return; }
+  }
+  // 3) fallback to default username
+  loadFromGitHub($('gh-username').value || '${defaultUser}');
+}
+
+// Event listeners
+$('btn-load').addEventListener('click', ()=> autoDetect());
+$('btn-refresh').addEventListener('click', ()=> loadFromGitHub($('gh-username').value.trim() || defaultUser));
+
+// Try auto on load
+window.addEventListener('load', ()=> setTimeout(autoDetect, 300));
+</script>
+</body>
+</html>
